@@ -1,7 +1,6 @@
 // @ts-nocheck
 // v0.0.1
 import React from 'react';
-import './sticky.scss';
 
 interface IStickyProps {
   stickyCallback?: Function;
