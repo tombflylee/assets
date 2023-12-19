@@ -9,6 +9,9 @@ interface IStickyProps {
   children: any;
   placeholderHeight?: string;
   targetId?: string;
+  // 120px | 20% ，只支持px和百分比，对应的是intersactionObserver的rootMargin;
+  // 如果给定了stickyTop默认会将target fixed的top设置为stickyTop的大小
+  stickyTop?: string;
 }
 
 const stickyObserverConfig = {
@@ -40,7 +43,7 @@ class Sticky extends React.Component<IStickyProps, any> {
   private stickyCallback = () => {
     if (this.ref.current) {
       this.ref.current.style.position = 'fixed';
-      this.ref.current.style.top = '0px';
+      this.ref.current.style.top = this.props.stickyTop ? this.props.stickyTop : '0px';
     }
     if (this.placeholderRef.current && this.ref.current) {
       this.placeholderRef.current.style.height = this.props.placeholderHeight
@@ -81,7 +84,10 @@ class Sticky extends React.Component<IStickyProps, any> {
             }
           });
         },
-        { ...stickyObserverConfig }
+        {
+          ...stickyObserverConfig,
+          rootMargin: `-${this.props.stickyTop || '0px'} 0px 0px 0px`,
+        }
       );
       stickyObserver.observe(target);
     }
@@ -100,10 +106,15 @@ class Sticky extends React.Component<IStickyProps, any> {
   componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {}
 
   render() {
-    const { children } = this.props;
     return (
       <>
-        <div className={`${this.prefixCls}-placeholder`} ref={this.placeholderRef} />
+        <div
+          className={`${this.prefixCls}-placeholder`}
+          ref={this.placeholderRef}
+          style={{
+            position: 'relative',
+          }}
+        />
         {this.cloneChild()}
       </>
     );
