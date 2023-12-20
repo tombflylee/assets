@@ -1,5 +1,4 @@
 // @ts-nocheck
-// v0.0.1
 import React from 'react';
 
 interface IStickyProps {
@@ -79,6 +78,7 @@ class Sticky extends React.Component<IStickyProps, any> {
     if (target) {
       let stickyObserver = new IntersectionObserver(
         (entries: any, observer: any) => {
+          console.log(123123123);
           entries.forEach((entry: any) => {
             if (entry.intersectionRatio < 1 && !entry.isIntersecting && !this.stickyFlag) {
               this.stickyFlag = true;
@@ -92,7 +92,8 @@ class Sticky extends React.Component<IStickyProps, any> {
         },
         {
           ...stickyObserverConfig,
-          rootMargin: `-${this.props.stickyTop || '0px'} 0px 0px 0px`,
+          // 左右方向设置为100%，保证永远不相交
+          rootMargin: `-${this.props.stickyTop || '0px'} 100% 0px 100%`,
         }
       );
       stickyObserver.observe(target);
