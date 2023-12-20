@@ -1,7 +1,6 @@
 // @ts-nocheck
 // v0.0.1
 import React from 'react';
-import './sticky.scss';
 
 interface IStickyProps {
   stickyCallback?: Function;
@@ -32,20 +31,26 @@ class Sticky extends React.Component<IStickyProps, any> {
   private targetStyle: React.CSSProperties = {};
 
   private getTargetStyle = () => {
+    // let _ref = this.placeholderRef.current?.nextElementSibling;
     if (this.ref.current) {
-      this.targetStyle.height = this.ref.current.getBoundingClientRect().height;
+      let bounding = this.ref.current.getBoundingClientRect();
+      this.targetStyle.height = bounding.height;
+
       // @ts-ignore
       this.targetStyle.position = this.ref.current.style.position;
       this.targetStyle.top = this.ref.current.style.top;
+      // 设置placeholder的百分比，在某些场景下会触发sticky/unsticky反复触发的情况
+      this.placeholderRef.current.style.width = bounding.width ? bounding.width + 'px' : '100%';
     }
   };
 
   private stickyCallback = () => {
+    // let _ref = this.placeholderRef.current?.nextElementSibling;
     if (this.ref.current) {
       this.ref.current.style.position = 'fixed';
       this.ref.current.style.top = this.props.stickyTop ? this.props.stickyTop : '0px';
     }
-    if (this.placeholderRef.current && this.ref.current) {
+    if (this.placeholderRef.current) {
       this.placeholderRef.current.style.height = this.props.placeholderHeight
         ? this.props.placeholderHeight
         : this.targetStyle.height + 'px';
@@ -55,11 +60,12 @@ class Sticky extends React.Component<IStickyProps, any> {
   };
 
   private unstickyCallback = () => {
+    // let _ref = this.placeholderRef.current?.nextElementSibling;
     if (this.ref.current) {
       this.ref.current.style.position = this.targetStyle.position as string;
       this.ref.current.style.top = this.targetStyle.top as string;
     }
-    if (this.placeholderRef.current && this.ref.current) {
+    if (this.placeholderRef.current) {
       this.placeholderRef.current.style.height = '0px';
     }
     this.props?.unstickyCallback?.();
